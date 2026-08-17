@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listNavPages } from "@/lib/cms.functions";
 import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { services } from "@/data/services";
 import { cn } from "@/lib/utils";
 
