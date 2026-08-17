@@ -14,6 +14,14 @@ export interface PageSpeedResult {
 }
 
 
+async function assertAdmin(context: {
+  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> };
+  userId: string;
+}) {
+  const { data } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+  if (data !== true) throw new Error("Forbidden");
+}
+
 /** Runs a Google PageSpeed Insights (Lighthouse) test for one URL. */
 export const runPageSpeed = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -21,7 +29,9 @@ export const runPageSpeed = createServerFn({ method: "POST" })
     url: String(data.url).slice(0, 400),
     strategy: data.strategy === "desktop" ? "desktop" : "mobile",
   }))
-  .handler(async ({ data }): Promise<PageSpeedResult> => {
+  .handler(async ({ data, context }): Promise<PageSpeedResult> => {
+    await assertAdmin(context as never);
+
     const endpoint = new URL("https://www.googleapis.com/pagespeedonline/v5/runPagespeed");
     endpoint.searchParams.set("url", data.url);
     endpoint.searchParams.set("strategy", data.strategy);
