@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import { Loader2, Plus, Trash2, Upload } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { uploadMedia } from "@/lib/media.functions";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+
 import type { BlockData, Field, Json } from "@/lib/blocks";
 import { bool, list, num, str } from "@/lib/blocks";
 
@@ -84,11 +86,24 @@ export function FieldsEditor({
   return (
     <div className="grid gap-5">
       {fields.map((field) => {
+        if (field.kind === "rich") {
+          return (
+            <RichTextEditor
+              key={field.name}
+              label={field.label}
+              help={field.help}
+              value={str(data, field.name)}
+              onChange={(html) => set(field.name, html)}
+              minHeight={200}
+            />
+          );
+        }
         if (field.kind === "image") {
           return (
             <ImageField key={field.name} label={field.label} value={str(data, field.name)} onChange={(v) => set(field.name, v)} />
           );
         }
+
         if (field.kind === "boolean") {
           return (
             <label key={field.name} className="flex items-center gap-3 text-sm font-medium text-ink">

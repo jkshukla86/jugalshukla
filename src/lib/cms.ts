@@ -95,3 +95,139 @@ export const formatDate = (value?: string | null) =>
   value
     ? new Date(value).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
     : "";
+
+/** Renders admin-managed JSON-LD (one object or an array) as head script entries. */
+export function seoScripts(seo?: SeoRecord | null) {
+  const raw = seo?.jsonld?.trim();
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    const items = Array.isArray(parsed) ? parsed : [parsed];
+    return items.map((item) => ({
+      type: "application/ld+json",
+      children: JSON.stringify(item),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+export interface SchemaPreset {
+  id: string;
+  label: string;
+  description: string;
+  build: (ctx: { url: string; title: string; description: string; image: string }) => Record<string, unknown>;
+}
+
+export const schemaPresets: SchemaPreset[] = [
+  {
+    id: "Article",
+    label: "Article / blog post",
+    description: "Best for blog articles and guides.",
+    build: ({ url, title, description, image }) => ({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: title,
+      description,
+      image: image || undefined,
+      mainEntityOfPage: { "@type": "WebPage", "@id": url },
+      author: { "@type": "Person", name: "Jugal K. Shukla", url: "https://jugalshukla.lovable.app/about" },
+      publisher: { "@type": "Person", name: "Jugal K. Shukla" },
+      datePublished: new Date().toISOString().slice(0, 10),
+    }),
+  },
+  {
+    id: "Service",
+    label: "Service",
+    description: "Best for service pages.",
+    build: ({ url, title, description }) => ({
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: title,
+      description,
+      url,
+      serviceType: title,
+      provider: { "@type": "Person", name: "Jugal K. Shukla" },
+      areaServed: { "@type": "Country", name: "India" },
+    }),
+  },
+  {
+    id: "WebPage",
+    label: "Web page",
+    description: "A safe default for any standard page.",
+    build: ({ url, title, description }) => ({
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: title,
+      description,
+      url,
+    }),
+  },
+  {
+    id: "Person",
+    label: "Person (personal brand)",
+    description: "Best for the homepage and about page.",
+    build: ({ url, description, image }) => ({
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: "Jugal K. Shukla",
+      jobTitle: "Digital Marketing, Automation & Growth Expert",
+      description,
+      url,
+      image: image || undefined,
+      knowsAbout: ["SEO", "Marketing Automation", "Performance Marketing", "Growth Strategy"],
+    }),
+  },
+  {
+    id: "FAQPage",
+    label: "FAQ page",
+    description: "Use only when the page really shows questions and answers.",
+    build: () => ({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "Replace with your question",
+          acceptedAnswer: { "@type": "Answer", text: "Replace with your answer." },
+        },
+      ],
+    }),
+  },
+  {
+    id: "BreadcrumbList",
+    label: "Breadcrumbs",
+    description: "Helps Google show the page path in results.",
+    build: ({ url, title }) => ({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://jugalshukla.lovable.app/" },
+        { "@type": "ListItem", position: 2, name: title, item: url },
+      ],
+    }),
+  },
+];
+
+export const SITE_ORIGIN = "https://jugalshukla.lovable.app";
+
+export const absoluteUrl = (path: string) => `${SITE_ORIGIN}${path === "/" ? "/" : path}`;
+
+export const pageSpeedUrl = (path: string) =>
+  `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(absoluteUrl(path))}&form_factor=mobile`;
+
+export const prettyJson = (value: string) => {
+  try {
+    return JSON.stringify(JSON.parse(value), null, 2);
+  } catch {
+    return value;
+  }
+};
+
+/** Strips HTML tags for excerpt/description generation. */
+export const stripHtml = (html: string) =>
+  html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();

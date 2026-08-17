@@ -272,3 +272,94 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Rich text — shared by the admin editor and the published pages/articles. */
+.prose-editor,
+.prose-content {
+  color: var(--color-muted-foreground, oklch(0.5 0.02 264));
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+
+.prose-editor h2,
+.prose-content h2 {
+  margin-top: 2.25rem;
+  margin-bottom: 0.9rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.prose-editor h3,
+.prose-content h3 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.7rem;
+  font-size: 1.25rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.prose-editor p,
+.prose-content p {
+  margin-bottom: 1.25rem;
+}
+
+.prose-editor ul,
+.prose-content ul,
+.prose-editor ol,
+.prose-content ol {
+  margin: 0 0 1.4rem 1.25rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.prose-editor ul,
+.prose-content ul {
+  list-style: disc;
+}
+
+.prose-editor ol,
+.prose-content ol {
+  list-style: decimal;
+}
+
+.prose-editor blockquote,
+.prose-content blockquote {
+  margin: 0 0 1.4rem;
+  border-left: 3px solid oklch(0.58 0.2 264);
+  padding: 0.35rem 0 0.35rem 1.15rem;
+  font-style: italic;
+  color: var(--ink);
+}
+
+.prose-editor a,
+.prose-content a {
+  color: oklch(0.45 0.19 264);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.prose-editor strong,
+.prose-content strong {
+  color: var(--ink);
+}
+
+.prose-editor img,
+.prose-content img {
+  border-radius: 1.25rem;
+  width: 100%;
+  height: auto;
+}
+
+.prose-editor figure,
+.prose-content figure {
+  margin: 1.75rem 0;
+}
+
+.prose-editor figcaption,
+.prose-content figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.8125rem;
+}

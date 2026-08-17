@@ -11,12 +11,14 @@ export interface Block {
 export type FieldKind =
   | "text"
   | "textarea"
+  | "rich"
   | "image"
   | "number"
   | "boolean"
   | "select"
   | "stringList"
   | "objectList";
+
 
 export interface Field {
   name: string;
@@ -89,15 +91,28 @@ export const blockDefs: BlockDef[] = [
   {
     type: "richText",
     label: "Text section",
-    description: "Heading plus paragraphs.",
+    description: "Heading plus formatted copy — headings, bold, lists, links and images.",
     fields: [
       { name: "eyebrow", label: "Eyebrow", kind: "text" },
       { name: "heading", label: "Heading", kind: "text" },
-      { name: "paragraphs", label: "Paragraphs", kind: "stringList" },
+      {
+        name: "html",
+        label: "Formatted content",
+        kind: "rich",
+        help: "Use the toolbar for headings, bold, lists, links and images. Anything here replaces the plain paragraphs below.",
+      },
+      { name: "paragraphs", label: "Plain paragraphs (optional)", kind: "stringList" },
       bgField,
     ],
-    defaults: { eyebrow: "", heading: "A section heading", paragraphs: ["Write your copy here."], bg: "white" },
+    defaults: {
+      eyebrow: "",
+      heading: "A section heading",
+      html: "<p>Write your copy here. Use the toolbar to add headings, bold text, lists, links and images.</p>",
+      paragraphs: [],
+      bg: "white",
+    },
   },
+
   {
     type: "cards",
     label: "Card grid",
@@ -139,8 +154,11 @@ export const blockDefs: BlockDef[] = [
       { name: "eyebrow", label: "Eyebrow", kind: "text" },
       { name: "heading", label: "Heading", kind: "text" },
       { name: "paragraphs", label: "Paragraphs", kind: "stringList" },
+      { name: "html", label: "Formatted content (replaces paragraphs)", kind: "rich" },
       { name: "image", label: "Image", kind: "image" },
+      { name: "alt", label: "Image alt text", kind: "text" },
       { name: "imageSide", label: "Image side", kind: "select", options: ["left", "right"] },
+
       { name: "ctaLabel", label: "Button label", kind: "text" },
       { name: "ctaTo", label: "Button link", kind: "text" },
       bgField,
@@ -149,7 +167,10 @@ export const blockDefs: BlockDef[] = [
       eyebrow: "",
       heading: "Section heading",
       paragraphs: ["Write your copy here."],
+      html: "",
       image: "",
+      alt: "",
+
       imageSide: "left",
       ctaLabel: "",
       ctaTo: "",
