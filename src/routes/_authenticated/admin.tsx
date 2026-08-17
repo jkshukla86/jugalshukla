@@ -18,8 +18,11 @@ const nav = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/blog", label: "Blog posts", icon: Newspaper },
   { to: "/admin/pages", label: "Pages", icon: FileText },
-  { to: "/admin/seo", label: "SEO", icon: Search },
+  { to: "/admin/seo", label: "SEO & schema", icon: Search },
+  { to: "/admin/speed", label: "Page speed", icon: Gauge },
+  { to: "/admin/code", label: "Custom code", icon: Code2 },
 ] as const;
+
 
 function AdminLayout() {
   const navigate = useNavigate();
