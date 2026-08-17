@@ -9,24 +9,22 @@ import { ServiceIcon } from "@/components/ServiceIcon";
 import { categories, services, type ServiceCategory } from "@/data/services";
 import { faqs, process } from "@/data/site";
 import { cn } from "@/lib/utils";
+import { getSeo } from "@/lib/cms.functions";
+import { seoLinks, seoMeta } from "@/lib/cms";
 
 export const Route = createFileRoute("/services/")({
-  head: () => ({
-    meta: [
-      { title: "Digital Marketing Services | Jugal K. Shukla" },
+  loader: () => getSeo({ data: { path: "/services" } }).then((seo) => ({ seo })),
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
       {
-        name: "description",
-        content:
+        title: "Digital Marketing Services | Jugal K. Shukla",
+        description:
           "SEO, Google and Meta ads, CRO, analytics, marketing automation and AI workflows — 21 services built around one metric: qualified pipeline.",
+        ogDescription: "Services built around one metric — qualified pipeline. Audit, retainer or project sprint.",
       },
-      { property: "og:title", content: "Digital Marketing Services | Jugal K. Shukla" },
-      {
-        property: "og:description",
-        content: "Services built around one metric — qualified pipeline. Audit, retainer or project sprint.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+      loaderData?.seo,
+    ),
+    links: seoLinks(loaderData?.seo),
   }),
   component: ServicesHub,
 });
