@@ -25,6 +25,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminBlogIndexRouteImport } from './routes/_authenticated/admin.blog.index'
 import { Route as AuthenticatedAdminBlogIdRouteImport } from './routes/_authenticated/admin.blog.$id'
 import { Route as AuthenticatedAdminCodeIndexRouteImport } from './routes/_authenticated/admin.code.index'
+import { Route as AuthenticatedAdminMenuIndexRouteImport } from './routes/_authenticated/admin.menu.index'
 import { Route as AuthenticatedAdminPagesIndexRouteImport } from './routes/_authenticated/admin.pages.index'
 import { Route as AuthenticatedAdminPagesIdRouteImport } from './routes/_authenticated/admin.pages.$id'
 import { Route as AuthenticatedAdminSeoIndexRouteImport } from './routes/_authenticated/admin.seo.index'
@@ -113,6 +114,12 @@ const AuthenticatedAdminCodeIndexRoute =
     path: '/code/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMenuIndexRoute =
+  AuthenticatedAdminMenuIndexRouteImport.update({
+    id: '/menu/',
+    path: '/menu/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminPagesIndexRoute =
   AuthenticatedAdminPagesIndexRouteImport.update({
     id: '/pages/',
@@ -161,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
   '/admin/code/': typeof AuthenticatedAdminCodeIndexRoute
+  '/admin/menu/': typeof AuthenticatedAdminMenuIndexRoute
   '/admin/pages/': typeof AuthenticatedAdminPagesIndexRoute
   '/admin/seo/': typeof AuthenticatedAdminSeoIndexRoute
   '/admin/speed/': typeof AuthenticatedAdminSpeedIndexRoute
@@ -182,6 +190,7 @@ export interface FileRoutesByTo {
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/admin/blog': typeof AuthenticatedAdminBlogIndexRoute
   '/admin/code': typeof AuthenticatedAdminCodeIndexRoute
+  '/admin/menu': typeof AuthenticatedAdminMenuIndexRoute
   '/admin/pages': typeof AuthenticatedAdminPagesIndexRoute
   '/admin/seo': typeof AuthenticatedAdminSeoIndexRoute
   '/admin/speed': typeof AuthenticatedAdminSpeedIndexRoute
@@ -206,6 +215,7 @@ export interface FileRoutesById {
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/_authenticated/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
   '/_authenticated/admin/code/': typeof AuthenticatedAdminCodeIndexRoute
+  '/_authenticated/admin/menu/': typeof AuthenticatedAdminMenuIndexRoute
   '/_authenticated/admin/pages/': typeof AuthenticatedAdminPagesIndexRoute
   '/_authenticated/admin/seo/': typeof AuthenticatedAdminSeoIndexRoute
   '/_authenticated/admin/speed/': typeof AuthenticatedAdminSpeedIndexRoute
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/api/public/media/$'
     | '/admin/blog/'
     | '/admin/code/'
+    | '/admin/menu/'
     | '/admin/pages/'
     | '/admin/seo/'
     | '/admin/speed/'
@@ -251,6 +262,7 @@ export interface FileRouteTypes {
     | '/api/public/media/$'
     | '/admin/blog'
     | '/admin/code'
+    | '/admin/menu'
     | '/admin/pages'
     | '/admin/seo'
     | '/admin/speed'
@@ -274,6 +286,7 @@ export interface FileRouteTypes {
     | '/api/public/media/$'
     | '/_authenticated/admin/blog/'
     | '/_authenticated/admin/code/'
+    | '/_authenticated/admin/menu/'
     | '/_authenticated/admin/pages/'
     | '/_authenticated/admin/seo/'
     | '/_authenticated/admin/speed/'
@@ -408,6 +421,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCodeIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/menu/': {
+      id: '/_authenticated/admin/menu/'
+      path: '/menu'
+      fullPath: '/admin/menu/'
+      preLoaderRoute: typeof AuthenticatedAdminMenuIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/pages/': {
       id: '/_authenticated/admin/pages/'
       path: '/pages'
@@ -452,6 +472,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPagesIdRoute: typeof AuthenticatedAdminPagesIdRoute
   AuthenticatedAdminBlogIndexRoute: typeof AuthenticatedAdminBlogIndexRoute
   AuthenticatedAdminCodeIndexRoute: typeof AuthenticatedAdminCodeIndexRoute
+  AuthenticatedAdminMenuIndexRoute: typeof AuthenticatedAdminMenuIndexRoute
   AuthenticatedAdminPagesIndexRoute: typeof AuthenticatedAdminPagesIndexRoute
   AuthenticatedAdminSeoIndexRoute: typeof AuthenticatedAdminSeoIndexRoute
   AuthenticatedAdminSpeedIndexRoute: typeof AuthenticatedAdminSpeedIndexRoute
@@ -463,6 +484,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPagesIdRoute: AuthenticatedAdminPagesIdRoute,
   AuthenticatedAdminBlogIndexRoute: AuthenticatedAdminBlogIndexRoute,
   AuthenticatedAdminCodeIndexRoute: AuthenticatedAdminCodeIndexRoute,
+  AuthenticatedAdminMenuIndexRoute: AuthenticatedAdminMenuIndexRoute,
   AuthenticatedAdminPagesIndexRoute: AuthenticatedAdminPagesIndexRoute,
   AuthenticatedAdminSeoIndexRoute: AuthenticatedAdminSeoIndexRoute,
   AuthenticatedAdminSpeedIndexRoute: AuthenticatedAdminSpeedIndexRoute,
