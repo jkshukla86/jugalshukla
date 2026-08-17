@@ -9,11 +9,19 @@ import { ServiceIcon } from "@/components/ServiceIcon";
 import { categories, services, type ServiceCategory } from "@/data/services";
 import { faqs, process } from "@/data/site";
 import { cn } from "@/lib/utils";
-import { getSeo } from "@/lib/cms.functions";
+import { getPageWithSeo, listPublicPosts } from "@/lib/cms.functions";
+import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 
 export const Route = createFileRoute("/services/")({
-  loader: () => getSeo({ data: { path: "/services" } }).then((seo) => ({ seo })),
+  loader: async () => {
+    const [{ page, seo }, posts] = await Promise.all([
+      getPageWithSeo({ data: { path: "/services" } }),
+      listPublicPosts(),
+    ]);
+    return { page, seo, posts };
+  },
+
   head: ({ loaderData }) => ({
     meta: seoMeta(
       {
