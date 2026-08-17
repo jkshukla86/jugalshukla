@@ -39,7 +39,15 @@ const fmt = (d: string) =>
   !d ? "" : new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
 function Blog() {
-  const { dbPosts } = Route.useLoaderData();
+  const { dbPosts, page } = Route.useLoaderData();
+  if (page?.edited && page.blocks.length > 0) {
+    return (
+      <PageShell>
+        <BlockRenderer blocks={page.blocks} posts={dbPosts} />
+      </PageShell>
+    );
+  }
+
   const posts = dbPosts.length
     ? dbPosts.map((p) => ({
         slug: p.slug,
