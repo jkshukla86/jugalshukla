@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { listNavPages } from "@/lib/cms.functions";
 import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { services } from "@/data/services";
@@ -12,6 +14,11 @@ const nav = [
 ];
 
 export function SiteHeader() {
+  const { data: extraPages = [] } = useQuery({
+    queryKey: ["nav-pages"],
+    queryFn: () => listNavPages(),
+    staleTime: 60_000,
+  });
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [mega, setMega] = useState(false);
@@ -104,6 +111,18 @@ export function SiteHeader() {
           {nav.slice(2).map((item) => (
             <NavItem key={item.to} {...item} scrolled={scrolled} />
           ))}
+          {extraPages.map((page) => (
+            <a
+              key={page.path}
+              href={page.path}
+              className={cn(
+                "rounded-full px-4 py-2.5 text-sm font-semibold transition-colors",
+                scrolled ? "text-ink hover:text-blue-700" : "text-white/80 hover:text-white",
+              )}
+            >
+              {page.nav_label || page.title}
+            </a>
+          ))}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -180,6 +199,16 @@ export function SiteHeader() {
               >
                 {item.label}
               </Link>
+            ))}
+            {extraPages.map((page) => (
+              <a
+                key={page.path}
+                href={page.path}
+                onClick={() => setOpen(false)}
+                className="block border-b border-line py-4 text-lg font-semibold text-ink"
+              >
+                {page.nav_label || page.title}
+              </a>
             ))}
           </nav>
           <div className="border-t border-line p-5">
