@@ -72,8 +72,20 @@ const tiers = [
 ];
 
 function ServicesHub() {
+  const { page, posts: dbPosts } = Route.useLoaderData();
   const [filter, setFilter] = useState<ServiceCategory | "All">("All");
   const list = filter === "All" ? services : services.filter((s) => s.category === filter);
+
+  // Once this page has been customised in the admin, its sections replace the built-in design.
+  if (page?.edited && page.blocks.length > 0) {
+    return (
+      <PageShell>
+        <BlockRenderer blocks={page.blocks} posts={dbPosts} />
+      </PageShell>
+    );
+  }
+
+
 
   return (
     <PageShell>
