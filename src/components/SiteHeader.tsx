@@ -48,7 +48,7 @@ export function SiteHeader() {
     >
       <div className="container-page flex h-[74px] items-center justify-between gap-6">
         <Link to="/" className="group flex items-center" onClick={() => setOpen(false)} aria-label="Jugal Kishore Shukla — home">
-          <BrandLogo tone={scrolled ? "dark" : "light"} className="h-10 w-[150px]" />
+          <BrandLogo tone={scrolled ? "dark" : "light"} className="h-[52px] w-[72px]" />
         </Link>
 
 

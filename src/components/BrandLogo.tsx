@@ -18,14 +18,14 @@ export function BrandLogo({
 }) {
   const gradient =
     tone === "light"
-      ? "linear-gradient(115deg, oklch(0.72 0.02 250) 0%, oklch(0.9 0.01 250) 38%, oklch(1 0 0) 70%, oklch(0.86 0.02 250) 100%)"
+      ? "linear-gradient(115deg, oklch(0.92 0.01 250) 0%, oklch(1 0 0) 45%, oklch(0.96 0.03 250) 100%)"
       : "linear-gradient(115deg, oklch(0.18 0.02 264) 0%, oklch(0.28 0.11 262) 45%, oklch(0.42 0.17 264) 78%, oklch(0.2 0.04 264) 100%)";
 
   return (
     <span
       role="img"
       aria-label={label}
-      className={cn("block h-11 w-[132px] shrink-0 transition-all duration-300", className)}
+      className={cn("block h-14 w-[77px] shrink-0 transition-all duration-300", className)}
       style={{
         backgroundImage: gradient,
         WebkitMaskImage: `url(${logo.url})`,

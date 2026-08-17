@@ -9,7 +9,7 @@ export function SiteFooter() {
     <footer className="bg-ink text-white/70">
       <div className="container-page grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4">
         <div>
-          <BrandLogo tone="light" className="h-11 w-[160px]" />
+          <BrandLogo tone="light" className="h-16 w-[88px]" />
           <p className="mt-5 text-sm leading-relaxed">
             Independent digital marketing, automation and growth expert. 10+ years turning SEO, paid media and AI
             workflows into qualified pipeline.
