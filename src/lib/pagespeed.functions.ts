@@ -3,15 +3,16 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export interface PageSpeedResult {
   ok: boolean;
-  error?: string;
-  performance?: number;
-  seo?: number;
-  accessibility?: number;
-  bestPractices?: number;
-  lcp?: string;
-  cls?: string;
-  tbt?: string;
+  error?: string | undefined;
+  performance?: number | undefined;
+  seo?: number | undefined;
+  accessibility?: number | undefined;
+  bestPractices?: number | undefined;
+  lcp?: string | undefined;
+  cls?: string | undefined;
+  tbt?: string | undefined;
 }
+
 
 /** Runs a Google PageSpeed Insights (Lighthouse) test for one URL. */
 export const runPageSpeed = createServerFn({ method: "POST" })
