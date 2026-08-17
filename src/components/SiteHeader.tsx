@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { listNavPages } from "@/lib/cms.functions";
+import { listMenu, listNavPages, type NavItemRecord } from "@/lib/cms.functions";
 import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -20,10 +20,20 @@ export function SiteHeader() {
     queryFn: () => listNavPages(),
     staleTime: 60_000,
   });
+  const { data: menuItems = [] } = useQuery({
+    queryKey: ["site-menu"],
+    queryFn: () => listMenu(),
+    staleTime: 60_000,
+  });
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [mega, setMega] = useState(false);
   const [mobileServices, setMobileServices] = useState(false);
+
+  const hasMenu = menuItems.length > 0;
+  const menuTop = menuItems.filter((i) => !i.parent_id).sort((a, b) => a.sort_order - b.sort_order);
+  const menuChildren = (id: string) =>
+    menuItems.filter((i) => i.parent_id === id).sort((a, b) => a.sort_order - b.sort_order);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -31,6 +41,7 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
