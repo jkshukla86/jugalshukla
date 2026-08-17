@@ -4,7 +4,7 @@ export const BASE_URL = "https://jugalshukla.com";
 
 export interface SitemapEntry {
   path: string;
-  lastmod?: string;
+  lastmod?: string | undefined;
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   priority?: string;
 }
