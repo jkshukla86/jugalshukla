@@ -12,6 +12,8 @@ export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
     const { post: dbPost, seo, more } = await getPublicPost({ data: { slug: params.slug } });
     if (dbPost) {
+      const raw = dbPost.body ?? "";
+      const isHtml = /<\/?(p|h2|h3|ul|ol|li|figure|img|blockquote|strong|em|a|br)\b/i.test(raw);
       return {
         post: {
           slug: dbPost.slug,
@@ -20,8 +22,15 @@ export const Route = createFileRoute("/blog/$slug")({
           category: dbPost.category,
           date: dbPost.published_at ?? "",
           readTime: dbPost.read_time,
-          body: dbPost.body.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean),
+          html: isHtml ? raw : null,
+          body: isHtml
+            ? []
+            : raw
+                .split(/\n\s*\n/)
+                .map((s) => s.trim())
+                .filter(Boolean),
           coverImage: dbPost.cover_image,
+          coverAlt: (dbPost as { cover_alt?: string }).cover_alt ?? "",
         },
         related: more.map((m) => ({ slug: m.slug, title: m.title, category: m.category })),
         seo,
@@ -30,7 +39,7 @@ export const Route = createFileRoute("/blog/$slug")({
     const post = postBySlug(params.slug);
     if (!post) throw notFound();
     return {
-      post: { ...post, coverImage: null as string | null },
+      post: { ...post, html: null as string | null, coverImage: null as string | null, coverAlt: "" },
       related: staticPosts
         .filter((p) => p.slug !== post.slug)
         .slice(0, 2)
@@ -52,10 +61,12 @@ export const Route = createFileRoute("/blog/$slug")({
         loaderData?.seo,
       ),
       links: seoLinks(loaderData?.seo),
+      scripts: seoScripts(loaderData?.seo),
     };
   },
   component: Post,
 });
+
 
 function Post() {
   const { post, related } = Route.useLoaderData();
