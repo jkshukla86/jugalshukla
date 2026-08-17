@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { FileText, Globe, LayoutDashboard, LogOut, Newspaper, Search } from "lucide-react";
+import { Code2, FileText, Gauge, Globe, LayoutDashboard, LogOut, Newspaper, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
