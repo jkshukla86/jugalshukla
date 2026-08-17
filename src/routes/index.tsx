@@ -13,23 +13,29 @@ import { posts } from "@/data/posts";
 import { services } from "@/data/services";
 import { credentials, faqs, miniCases, process, site, stats, testimonials } from "@/data/site";
 
+import { BlockRenderer } from "@/components/blocks/BlockRenderer";
+import { getPageWithSeo, listPublicPosts } from "@/lib/cms.functions";
+import { seoLinks, seoMeta } from "@/lib/cms";
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Jugal K. Shukla — Digital Marketing, Automation & Growth" },
+  loader: async () => {
+    const [{ page, seo }, dbPosts] = await Promise.all([
+      getPageWithSeo({ data: { path: "/" } }),
+      listPublicPosts(),
+    ]);
+    return { page, seo, dbPosts };
+  },
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
       {
-        name: "description",
-        content:
-          "I build growth engines, not just campaigns. 10+ years of SEO, paid media and AI-powered automation turned into qualified pipeline. Kanpur, India — working globally.",
+        title: 'Jugal K. Shukla — Digital Marketing, Automation & Growth',
+        description: 'I build growth engines, not just campaigns. 10+ years of SEO, paid media and AI-powered automation turned into qualified pipeline. Kanpur, India — working globally.',
+        ogTitle: 'Jugal K. Shukla — Digital Marketing, Automation & Growth',
+        ogDescription: 'SEO, paid media and AI-powered automation engineered around one number: qualified pipeline.',
+        ogType: "website",
       },
-      { property: "og:title", content: "Jugal K. Shukla — Digital Marketing, Automation & Growth" },
-      {
-        property: "og:description",
-        content: "SEO, paid media and AI-powered automation engineered around one number: qualified pipeline.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+      loaderData?.seo,
+    ),
+    links: seoLinks(loaderData?.seo),
   }),
   component: Home,
 });
@@ -58,6 +64,15 @@ const pillars = [
 ];
 
 function Home() {
+  const { page, dbPosts } = Route.useLoaderData();
+  if (page && page.blocks.length > 0) {
+    return (
+      <PageShell>
+        <BlockRenderer blocks={page.blocks} posts={dbPosts} />
+      </PageShell>
+    );
+  }
+
   return (
     <PageShell>
       <script

@@ -2,20 +2,22 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2 } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { site } from "@/data/site";
+import { getSeo } from "@/lib/cms.functions";
+import { seoLinks, seoMeta } from "@/lib/cms";
 
 export const Route = createFileRoute("/thank-you")({
-  head: () => ({
-    meta: [
-      { title: "Thank You — Your Enquiry Is In | Jugal K. Shukla" },
+  loader: () => getSeo({ data: { path: "/thank-you" } }).then((seo) => ({ seo })),
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
       {
-        name: "description",
-        content: "Thanks for reaching out. I read every enquiry myself and reply within 24 hours.",
+        title: "Thank You — Your Enquiry Is In | Jugal K. Shukla",
+        description: "Thanks for reaching out. I read every enquiry myself and reply within 24 hours.",
+        ogTitle: "Thank you for your enquiry",
+        ogDescription: "I read every enquiry myself and reply within 24 hours.",
       },
-      { property: "og:title", content: "Thank you for your enquiry" },
-      { property: "og:description", content: "I read every enquiry myself and reply within 24 hours." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+      loaderData?.seo,
+    ),
+    links: seoLinks(loaderData?.seo),
   }),
   component: ThankYou,
 });

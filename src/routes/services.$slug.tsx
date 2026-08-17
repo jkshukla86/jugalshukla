@@ -6,26 +6,22 @@ import { PageHero, PageShell } from "@/components/PageShell";
 import { Reveal } from "@/components/Reveal";
 import { ServiceIcon } from "@/components/ServiceIcon";
 import { serviceBySlug, services } from "@/data/services";
+import { getSeo } from "@/lib/cms.functions";
+import { seoLinks, seoMeta } from "@/lib/cms";
 
 export const Route = createFileRoute("/services/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     const service = serviceBySlug(params.slug);
     if (!service) throw notFound();
-    return { service };
+    const seo = await getSeo({ data: { path: `/services/${params.slug}` } });
+    return { service, seo };
   },
   head: ({ loaderData }) => {
     const s = loaderData?.service;
+    if (!s) return { meta: [{ title: "Service not found" }, { name: "robots", content: "noindex" }] };
     return {
-      meta: s
-        ? [
-            { title: s.seoTitle },
-            { name: "description", content: s.seoDescription },
-            { property: "og:title", content: s.seoTitle },
-            { property: "og:description", content: s.seoDescription },
-            { property: "og:type", content: "website" },
-            { name: "twitter:card", content: "summary_large_image" },
-          ]
-        : [],
+      meta: seoMeta({ title: s.seoTitle, description: s.seoDescription }, loaderData?.seo),
+      links: seoLinks(loaderData?.seo),
     };
   },
   component: ServicePage,

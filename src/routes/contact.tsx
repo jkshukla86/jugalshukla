@@ -6,20 +6,29 @@ import { PageHero, PageShell } from "@/components/PageShell";
 import { Reveal } from "@/components/Reveal";
 import { site } from "@/data/site";
 
+import { BlockRenderer } from "@/components/blocks/BlockRenderer";
+import { getPageWithSeo, listPublicPosts } from "@/lib/cms.functions";
+import { seoLinks, seoMeta } from "@/lib/cms";
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact Jugal K. Shukla — Book a Free Strategy Call" },
+  loader: async () => {
+    const [{ page, seo }, dbPosts] = await Promise.all([
+      getPageWithSeo({ data: { path: "/contact" } }),
+      listPublicPosts(),
+    ]);
+    return { page, seo, dbPosts };
+  },
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
       {
-        name: "description",
-        content:
-          "Email, WhatsApp or send a brief. I reply within 24 hours and will tell you honestly what I'd fix first in your marketing.",
+        title: 'Contact Jugal K. Shukla — Book a Free Strategy Call',
+        description: 'Email, WhatsApp or send a brief. I reply within 24 hours and will tell you honestly what I’d fix first in your marketing.',
+        ogTitle: 'Contact Jugal K. Shukla',
+        ogDescription: 'Book a free 30-minute strategy call. Response within 24 hours.',
+        ogType: "website",
       },
-      { property: "og:title", content: "Contact Jugal K. Shukla" },
-      { property: "og:description", content: "Book a free 30-minute strategy call. Response within 24 hours." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+      loaderData?.seo,
+    ),
+    links: seoLinks(loaderData?.seo),
   }),
   component: Contact,
 });
@@ -44,6 +53,15 @@ const contactFaqs = [
 ];
 
 function Contact() {
+  const { page, dbPosts } = Route.useLoaderData();
+  if (page && page.blocks.length > 0) {
+    return (
+      <PageShell>
+        <BlockRenderer blocks={page.blocks} posts={dbPosts} />
+      </PageShell>
+    );
+  }
+
   return (
     <PageShell>
       <PageHero

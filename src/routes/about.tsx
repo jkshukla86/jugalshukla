@@ -6,23 +6,29 @@ import { PageHero, PageShell } from "@/components/PageShell";
 import { Reveal } from "@/components/Reveal";
 import { credentials } from "@/data/site";
 
+import { BlockRenderer } from "@/components/blocks/BlockRenderer";
+import { getPageWithSeo, listPublicPosts } from "@/lib/cms.functions";
+import { seoLinks, seoMeta } from "@/lib/cms";
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About Jugal K. Shukla — Marketing & Automation Expert" },
+  loader: async () => {
+    const [{ page, seo }, dbPosts] = await Promise.all([
+      getPageWithSeo({ data: { path: "/about" } }),
+      listPublicPosts(),
+    ]);
+    return { page, seo, dbPosts };
+  },
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
       {
-        name: "description",
-        content:
-          "How I work: full-funnel marketing built on data, AI-powered automation and jargon-free reporting. 10+ years, certified by IIT Roorkee and Purdue University.",
+        title: 'About Jugal K. Shukla — Marketing & Automation Expert',
+        description: 'How I work: full-funnel marketing built on data, AI-powered automation and jargon-free reporting. 10+ years, certified by IIT Roorkee and Purdue University.',
+        ogTitle: 'About Jugal K. Shukla',
+        ogDescription: 'An independent growth expert who builds AI and automation into every marketing workflow.',
+        ogType: "profile",
       },
-      { property: "og:title", content: "About Jugal K. Shukla" },
-      {
-        property: "og:description",
-        content: "An independent growth expert who builds AI and automation into every marketing workflow.",
-      },
-      { property: "og:type", content: "profile" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+      loaderData?.seo,
+    ),
+    links: seoLinks(loaderData?.seo),
   }),
   component: About,
 });
@@ -43,6 +49,15 @@ const skills = [
 ];
 
 function About() {
+  const { page, dbPosts } = Route.useLoaderData();
+  if (page && page.blocks.length > 0) {
+    return (
+      <PageShell>
+        <BlockRenderer blocks={page.blocks} posts={dbPosts} />
+      </PageShell>
+    );
+  }
+
   return (
     <PageShell>
       <script

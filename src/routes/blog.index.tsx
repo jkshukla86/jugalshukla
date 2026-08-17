@@ -3,31 +3,46 @@ import { useState } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { PageHero, PageShell } from "@/components/PageShell";
 import { Reveal } from "@/components/Reveal";
-import { posts } from "@/data/posts";
+import { posts as staticPosts } from "@/data/posts";
+import { getSeo, listPublicPosts } from "@/lib/cms.functions";
+import { seoLinks, seoMeta } from "@/lib/cms";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/blog/")({
-  head: () => ({
-    meta: [
-      { title: "Marketing Notes & Playbooks | Jugal K. Shukla" },
+  loader: async () => {
+    const [dbPosts, seo] = await Promise.all([listPublicPosts(), getSeo({ data: { path: "/blog" } })]);
+    return { dbPosts, seo };
+  },
+  head: ({ loaderData }) => ({
+    meta: seoMeta(
       {
-        name: "description",
-        content:
+        title: "Marketing Notes & Playbooks | Jugal K. Shukla",
+        description:
           "Practical notes on SEO, paid media, GA4 and AI marketing workflows — written from client work, not from theory.",
+        ogDescription: "Notes on SEO, paid media, analytics and AI marketing workflows.",
       },
-      { property: "og:title", content: "Marketing Notes & Playbooks | Jugal K. Shukla" },
-      { property: "og:description", content: "Notes on SEO, paid media, analytics and AI marketing workflows." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
+      loaderData?.seo,
+    ),
+    links: seoLinks(loaderData?.seo),
   }),
   component: Blog,
 });
 
 const fmt = (d: string) =>
-  new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  !d ? "" : new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
 function Blog() {
+  const { dbPosts } = Route.useLoaderData();
+  const posts = dbPosts.length
+    ? dbPosts.map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        excerpt: p.excerpt,
+        category: p.category,
+        date: p.published_at ?? "",
+        readTime: p.read_time,
+      }))
+    : staticPosts;
   const cats = ["All", ...new Set(posts.map((p) => p.category))];
   const [cat, setCat] = useState("All");
   const [query, setQuery] = useState("");

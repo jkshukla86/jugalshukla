@@ -3,36 +3,62 @@ import portrait from "@/assets/jugal-portrait.jpeg.asset.json";
 import { CtaBand } from "@/components/CtaBand";
 import { PageHero, PageShell } from "@/components/PageShell";
 import { Reveal } from "@/components/Reveal";
-import { postBySlug, posts } from "@/data/posts";
+import { postBySlug, posts as staticPosts } from "@/data/posts";
+import { getPublicPost } from "@/lib/cms.functions";
+import { seoLinks, seoMeta } from "@/lib/cms";
 import { site } from "@/data/site";
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
+    const { post: dbPost, seo, more } = await getPublicPost({ data: { slug: params.slug } });
+    if (dbPost) {
+      return {
+        post: {
+          slug: dbPost.slug,
+          title: dbPost.title,
+          excerpt: dbPost.excerpt,
+          category: dbPost.category,
+          date: dbPost.published_at ?? "",
+          readTime: dbPost.read_time,
+          body: dbPost.body.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean),
+          coverImage: dbPost.cover_image,
+        },
+        related: more.map((m) => ({ slug: m.slug, title: m.title, category: m.category })),
+        seo,
+      };
+    }
     const post = postBySlug(params.slug);
     if (!post) throw notFound();
-    return { post };
+    return {
+      post: { ...post, coverImage: null as string | null },
+      related: staticPosts
+        .filter((p) => p.slug !== post.slug)
+        .slice(0, 2)
+        .map((m) => ({ slug: m.slug, title: m.title, category: m.category })),
+      seo: null,
+    };
   },
   head: ({ loaderData }) => {
     const p = loaderData?.post;
+    if (!p) return { meta: [{ title: "Article not found" }, { name: "robots", content: "noindex" }] };
     return {
-      meta: p
-        ? [
-            { title: `${p.title.slice(0, 55)} | Jugal K. Shukla` },
-            { name: "description", content: p.excerpt.slice(0, 155) },
-            { property: "og:title", content: p.title },
-            { property: "og:description", content: p.excerpt.slice(0, 155) },
-            { property: "og:type", content: "article" },
-            { name: "twitter:card", content: "summary_large_image" },
-          ]
-        : [],
+      meta: seoMeta(
+        {
+          title: `${p.title.slice(0, 55)} | Jugal K. Shukla`,
+          description: p.excerpt.slice(0, 155),
+          ogTitle: p.title,
+          ogType: "article",
+        },
+        loaderData?.seo,
+      ),
+      links: seoLinks(loaderData?.seo),
     };
   },
   component: Post,
 });
 
 function Post() {
-  const { post } = Route.useLoaderData();
-  const related = posts.filter((p) => p.slug !== post.slug).slice(0, 2);
+  const { post, related } = Route.useLoaderData();
 
   return (
     <PageShell>
@@ -55,7 +81,10 @@ function Post() {
         crumb={[{ label: "Home", to: "/" }, { label: "Blog", to: "/blog" }, { label: post.category }]}
       >
         <p className="mt-6 text-sm text-white/60">
-          {new Date(post.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })} ·{" "}
+          {post.date
+            ? new Date(post.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })
+            : ""}{" "}
+          ·{" "}
           {post.readTime}
         </p>
       </PageHero>
@@ -63,11 +92,34 @@ function Post() {
       <article className="section-y">
         <div className="container-page">
           <div className="mx-auto max-w-[760px]">
-            {post.body.map((para) => (
-              <p key={para} className="mb-6 text-[1.0625rem] leading-[1.8] text-muted-foreground">
-                {para}
-              </p>
-            ))}
+            {post.coverImage && (
+              <img
+                src={post.coverImage}
+                alt={post.title}
+                loading="lazy"
+                className="mb-10 w-full rounded-2xl object-cover"
+              />
+            )}
+            {post.body.map((para, i) =>
+              para.startsWith("## ") ? (
+                <h2 key={i} className="mt-10 mb-4 text-2xl font-bold tracking-tight text-ink">
+                  {para.slice(3)}
+                </h2>
+              ) : para.startsWith("- ") ? (
+                <ul key={i} className="mb-6 grid gap-2">
+                  {para.split("\n").map((line, j) => (
+                    <li key={j} className="flex gap-3 text-[1.0625rem] leading-[1.8] text-muted-foreground">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />
+                      {line.replace(/^-\s*/, "")}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p key={i} className="mb-6 text-[1.0625rem] leading-[1.8] text-muted-foreground">
+                  {para}
+                </p>
+              ),
+            )}
 
             <div className="surface-card mt-12 flex flex-col gap-5 p-7 sm:flex-row sm:items-center">
               <img
