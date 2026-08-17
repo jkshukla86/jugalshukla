@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "@/lib/assert-admin.server";
 
 export interface PageSpeedResult {
   ok: boolean;
@@ -21,7 +22,9 @@ export const runPageSpeed = createServerFn({ method: "POST" })
     url: String(data.url).slice(0, 400),
     strategy: data.strategy === "desktop" ? "desktop" : "mobile",
   }))
-  .handler(async ({ data }): Promise<PageSpeedResult> => {
+  .handler(async ({ data, context }): Promise<PageSpeedResult> => {
+    await assertAdmin(context as never);
+
     const endpoint = new URL("https://www.googleapis.com/pagespeedonline/v5/runPagespeed");
     endpoint.searchParams.set("url", data.url);
     endpoint.searchParams.set("strategy", data.strategy);
