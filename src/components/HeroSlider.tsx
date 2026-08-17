@@ -22,7 +22,7 @@ export function HeroSlider() {
 
   return (
     <div
-      className="absolute inset-0 -z-10 overflow-hidden"
+      className="absolute inset-0 z-0 overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >

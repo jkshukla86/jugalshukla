@@ -87,9 +87,9 @@ function Home() {
       />
 
       {/* Hero */}
-      <section className="relative flex min-h-[78vh] items-center overflow-hidden pt-32 pb-24 md:min-h-[90vh] md:pt-40">
+      <section className="relative isolate flex min-h-[78vh] items-center overflow-hidden pt-32 pb-24 md:min-h-[90vh] md:pt-40">
         <HeroSlider />
-        <div className="container-page grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="container-page relative z-10 grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <p className="text-xs font-semibold tracking-[0.16em] text-blue-300 uppercase">
               Digital Marketing · Automation · Growth
