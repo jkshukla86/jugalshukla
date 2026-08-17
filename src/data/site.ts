@@ -114,23 +114,23 @@ export const faqs = [
 export const testimonials = [
   {
     quote:
-      "[REPLACE: client testimonial] Jugal rebuilt our funnel and tracking in six weeks, and for the first time we could see which campaigns actually produced pipeline.",
-    name: "[REPLACE: name]",
-    role: "Founder",
-    company: "[REPLACE: company]",
+      "I worked with Jugal while working on an SEO project. He has immense knowledge, extremely good understanding of the space, plus intuition of how industry is changing with Gen AI integration across all Search Engines. He is absolutely phenomenal to work with, meets deadlines, is extremely comprehensive, and puts in a lot of hard work for client success. Wish him all the best and hope to work with him again in the future.",
+    name: "Kunal Mehta",
+    role: "Data and AI Platform Head",
+    company: "",
   },
   {
     quote:
-      "[REPLACE: client testimonial] Straight answers, no jargon, and the SEO work kept compounding long after the engagement ended.",
-    name: "[REPLACE: name]",
-    role: "Head of Marketing",
-    company: "[REPLACE: company]",
+      "Working with Jugal entirely changed the way we approached digital marketing. He helped us identify the right audience, improve our campaigns, and build a much more structured lead generation process. His ability to combine SEO, paid advertising, social media, and automation into one growth strategy is impressive. He is highly knowledgeable, responsive, and focused on measurable results.",
+    name: "Ajay Raj Negi",
+    role: "MD",
+    company: "IHMS Kotdwar",
   },
   {
     quote:
-      "[REPLACE: client testimonial] The AI workflows he set up cut our content turnaround in half without losing our voice.",
-    name: "[REPLACE: name]",
-    role: "Marketing Lead",
-    company: "[REPLACE: company]",
+      "Jugal brings both strategic thinking and hands-on execution to digital marketing. From SEO and content strategy to PPC campaigns and lead generation, he understands how different channels work together to drive growth. His data-driven approach helped us make better marketing decisions and improve the quality of our leads. I would definitely recommend him to businesses looking to build a stronger digital presence and generate consistent growth.",
+    name: "Vikas Gupta",
+    role: "Business Owner",
+    company: "BGSG Solution Pvt. Ltd.",
   },
 ];
