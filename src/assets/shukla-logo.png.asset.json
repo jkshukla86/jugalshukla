@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "asset_id": "d05c3b74-fa7d-494c-aabc-068be25fc64d",
+  "asset_id": "be8aaaca-c01c-4667-bb61-27164eea321f",
   "project_id": "19da2d57-851c-470e-aac7-d379d22f2fcb",
-  "url": "/__l5e/assets-v1/d05c3b74-fa7d-494c-aabc-068be25fc64d/shukla-logo.png",
-  "r2_key": "a/v1/19da2d57-851c-470e-aac7-d379d22f2fcb/d05c3b74-fa7d-494c-aabc-068be25fc64d/shukla-logo.png",
-  "original_filename": "shukla-logo.png",
-  "size": 42945,
+  "url": "/__l5e/assets-v1/be8aaaca-c01c-4667-bb61-27164eea321f/shukla-logo-mask.png",
+  "r2_key": "a/v1/19da2d57-851c-470e-aac7-d379d22f2fcb/be8aaaca-c01c-4667-bb61-27164eea321f/shukla-logo-mask.png",
+  "original_filename": "shukla-logo-mask.png",
+  "size": 36661,
   "content_type": "image/png",
-  "created_at": "2026-08-17T11:01:33Z"
+  "created_at": "2026-08-17T11:13:50Z"
 }
