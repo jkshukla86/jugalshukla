@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "@/lib/assert-admin.server";
 
 export interface PageSpeedResult {
   ok: boolean;
@@ -13,14 +14,6 @@ export interface PageSpeedResult {
   tbt?: string | undefined;
 }
 
-
-async function assertAdmin(context: {
-  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> };
-  userId: string;
-}) {
-  const { data } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
-  if (data !== true) throw new Error("Forbidden");
-}
 
 /** Runs a Google PageSpeed Insights (Lighthouse) test for one URL. */
 export const runPageSpeed = createServerFn({ method: "POST" })
