@@ -83,6 +83,26 @@ export const listNavPages = createServerFn({ method: "GET" }).handler(async () =
   return (data ?? []) as { path: string; title: string; nav_label: string | null; sort_order: number }[];
 });
 
+export interface NavItemRecord {
+  id: string;
+  label: string;
+  url: string;
+  parent_id: string | null;
+  sort_order: number;
+  visible: boolean;
+}
+
+/** The admin-managed site menu (flat list; children reference parent_id). */
+export const listMenu = createServerFn({ method: "GET" }).handler(async (): Promise<NavItemRecord[]> => {
+  const { data } = await publicClient()
+    .from("nav_items")
+    .select("id, label, url, parent_id, sort_order, visible")
+    .eq("visible", true)
+    .order("sort_order", { ascending: true });
+  return (data ?? []) as unknown as NavItemRecord[];
+});
+
+
 export const listPublicPosts = createServerFn({ method: "GET" }).handler(async (): Promise<PostRecord[]> => {
   const { data } = await publicClient()
     .from("posts")
