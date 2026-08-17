@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { BlockEditor } from "@/components/admin/BlockEditor";
 import { isBlockArray, type Block } from "@/lib/blocks";
 import { normalizePath } from "@/lib/cms";
+import { seedByPath } from "@/data/pageSeeds";
+
 
 export const Route = createFileRoute("/_authenticated/admin/pages/$id")({
   component: PageEditor,
@@ -44,8 +46,13 @@ function PageEditor() {
     setShowInNav(data.show_in_nav);
     setNavLabel(data.nav_label ?? "");
     setSortOrder(data.sort_order ?? 0);
-    setBlocks(isBlockArray(data.blocks) ? data.blocks : []);
+    const saved = isBlockArray(data.blocks) ? data.blocks : [];
+    // Empty page but we know its live design? Load it so there is always something to edit.
+    setBlocks(saved.length > 0 ? saved : (seedByPath(data.path)?.blocks() ?? []));
   }, [data]);
+
+  const seed = data ? seedByPath(data.path) : undefined;
+
 
   const save = async (publish?: boolean) => {
     setSaving(true);
