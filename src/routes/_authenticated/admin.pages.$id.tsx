@@ -159,9 +159,23 @@ function PageEditor() {
       </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-bold tracking-tight text-ink">Sections</h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-bold tracking-tight text-ink">Sections</h2>
+          {seed && (
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm("Replace the sections below with the original live design?")) setBlocks(seed.blocks());
+              }}
+              className="text-xs font-semibold text-blue-700"
+            >
+              Reset to original design
+            </button>
+          )}
+        </div>
         <BlockEditor blocks={blocks} onChange={setBlocks} />
       </div>
+
 
       {data?.kind !== "system" && (
         <button type="button" onClick={() => void remove()} className="w-fit text-xs font-semibold text-destructive">
