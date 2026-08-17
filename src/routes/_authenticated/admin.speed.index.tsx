@@ -29,7 +29,7 @@ const scoreTone = (score?: number) =>
         ? "bg-amber-100 text-amber-800"
         : "bg-red-100 text-red-800";
 
-function Score({ label, value }: { label: string; value?: number }) {
+function Score({ label, value }: { label: string; value?: number | undefined }) {
   return (
     <div className={`rounded-xl px-3 py-2 text-center ${scoreTone(value)}`}>
       <span className="block text-lg font-extrabold">{value ?? "—"}</span>

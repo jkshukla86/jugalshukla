@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminCodeIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminPagesIndexRouteImport } from './routes/_authenticated/admin.pages.index'
 import { Route as AuthenticatedAdminPagesIdRouteImport } from './routes/_authenticated/admin.pages.$id'
 import { Route as AuthenticatedAdminSeoIndexRouteImport } from './routes/_authenticated/admin.seo.index'
+import { Route as AuthenticatedAdminSpeedIndexRouteImport } from './routes/_authenticated/admin.speed.index'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -130,6 +131,12 @@ const AuthenticatedAdminSeoIndexRoute =
     path: '/seo/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminSpeedIndexRoute =
+  AuthenticatedAdminSpeedIndexRouteImport.update({
+    id: '/speed/',
+    path: '/speed/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
   id: '/api/public/media/$',
   path: '/api/public/media/$',
@@ -156,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/admin/code/': typeof AuthenticatedAdminCodeIndexRoute
   '/admin/pages/': typeof AuthenticatedAdminPagesIndexRoute
   '/admin/seo/': typeof AuthenticatedAdminSeoIndexRoute
+  '/admin/speed/': typeof AuthenticatedAdminSpeedIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -176,6 +184,7 @@ export interface FileRoutesByTo {
   '/admin/code': typeof AuthenticatedAdminCodeIndexRoute
   '/admin/pages': typeof AuthenticatedAdminPagesIndexRoute
   '/admin/seo': typeof AuthenticatedAdminSeoIndexRoute
+  '/admin/speed': typeof AuthenticatedAdminSpeedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -199,6 +208,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/code/': typeof AuthenticatedAdminCodeIndexRoute
   '/_authenticated/admin/pages/': typeof AuthenticatedAdminPagesIndexRoute
   '/_authenticated/admin/seo/': typeof AuthenticatedAdminSeoIndexRoute
+  '/_authenticated/admin/speed/': typeof AuthenticatedAdminSpeedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/admin/code/'
     | '/admin/pages/'
     | '/admin/seo/'
+    | '/admin/speed/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/admin/code'
     | '/admin/pages'
     | '/admin/seo'
+    | '/admin/speed'
   id:
     | '__root__'
     | '/'
@@ -264,6 +276,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/code/'
     | '/_authenticated/admin/pages/'
     | '/_authenticated/admin/seo/'
+    | '/_authenticated/admin/speed/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -416,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSeoIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/speed/': {
+      id: '/_authenticated/admin/speed/'
+      path: '/speed'
+      fullPath: '/admin/speed/'
+      preLoaderRoute: typeof AuthenticatedAdminSpeedIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/api/public/media/$': {
       id: '/api/public/media/$'
       path: '/api/public/media/$'
@@ -434,6 +454,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCodeIndexRoute: typeof AuthenticatedAdminCodeIndexRoute
   AuthenticatedAdminPagesIndexRoute: typeof AuthenticatedAdminPagesIndexRoute
   AuthenticatedAdminSeoIndexRoute: typeof AuthenticatedAdminSeoIndexRoute
+  AuthenticatedAdminSpeedIndexRoute: typeof AuthenticatedAdminSpeedIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -444,6 +465,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCodeIndexRoute: AuthenticatedAdminCodeIndexRoute,
   AuthenticatedAdminPagesIndexRoute: AuthenticatedAdminPagesIndexRoute,
   AuthenticatedAdminSeoIndexRoute: AuthenticatedAdminSeoIndexRoute,
+  AuthenticatedAdminSpeedIndexRoute: AuthenticatedAdminSpeedIndexRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
