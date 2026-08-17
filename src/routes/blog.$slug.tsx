@@ -5,7 +5,7 @@ import { PageHero, PageShell } from "@/components/PageShell";
 import { Reveal } from "@/components/Reveal";
 import { postBySlug, posts as staticPosts } from "@/data/posts";
 import { getPublicPost } from "@/lib/cms.functions";
-import { seoLinks, seoMeta } from "@/lib/cms";
+import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 import { site } from "@/data/site";
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -69,10 +69,12 @@ export const Route = createFileRoute("/blog/$slug")({
 
 
 function Post() {
-  const { post, related } = Route.useLoaderData();
+  const { post, related, seo } = Route.useLoaderData();
+  const hasCustomSchema = Boolean(seo?.jsonld?.trim());
 
   return (
     <PageShell>
+      {!hasCustomSchema && (
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -86,6 +88,7 @@ function Post() {
           }),
         }}
       />
+      )}
       <PageHero
         eyebrow={post.category}
         title={post.title}
@@ -106,30 +109,34 @@ function Post() {
             {post.coverImage && (
               <img
                 src={post.coverImage}
-                alt={post.title}
+                alt={post.coverAlt || post.title}
                 loading="lazy"
                 className="mb-10 w-full rounded-2xl object-cover"
               />
             )}
-            {post.body.map((para, i) =>
-              para.startsWith("## ") ? (
-                <h2 key={i} className="mt-10 mb-4 text-2xl font-bold tracking-tight text-ink">
-                  {para.slice(3)}
-                </h2>
-              ) : para.startsWith("- ") ? (
-                <ul key={i} className="mb-6 grid gap-2">
-                  {para.split("\n").map((line, j) => (
-                    <li key={j} className="flex gap-3 text-[1.0625rem] leading-[1.8] text-muted-foreground">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />
-                      {line.replace(/^-\s*/, "")}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p key={i} className="mb-6 text-[1.0625rem] leading-[1.8] text-muted-foreground">
-                  {para}
-                </p>
-              ),
+            {post.html ? (
+              <div className="prose-content" dangerouslySetInnerHTML={{ __html: post.html }} />
+            ) : (
+              post.body.map((para, i) =>
+                para.startsWith("## ") ? (
+                  <h2 key={i} className="mt-10 mb-4 text-2xl font-bold tracking-tight text-ink">
+                    {para.slice(3)}
+                  </h2>
+                ) : para.startsWith("- ") ? (
+                  <ul key={i} className="mb-6 grid gap-2">
+                    {para.split("\n").map((line, j) => (
+                      <li key={j} className="flex gap-3 text-[1.0625rem] leading-[1.8] text-muted-foreground">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />
+                        {line.replace(/^-\s*/, "")}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p key={i} className="mb-6 text-[1.0625rem] leading-[1.8] text-muted-foreground">
+                    {para}
+                  </p>
+                ),
+              )
             )}
 
             <div className="surface-card mt-12 flex flex-col gap-5 p-7 sm:flex-row sm:items-center">
