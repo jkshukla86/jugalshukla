@@ -53,9 +53,16 @@ export function SiteHeader() {
 
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
+          {hasMenu ? (
+            menuTop.map((item) => (
+              <MenuNode key={item.id} item={item} kids={menuChildren(item.id)} scrolled={scrolled} />
+            ))
+          ) : (
+          <>
           {nav.slice(0, 2).map((item) => (
             <NavItem key={item.to} {...item} scrolled={scrolled} />
           ))}
+
 
           <div className="relative" onMouseEnter={() => setMega(true)} onMouseLeave={() => setMega(false)}>
             <button
@@ -115,7 +122,10 @@ export function SiteHeader() {
               {page.nav_label || page.title}
             </a>
           ))}
+          </>
+          )}
         </nav>
+
 
         <div className="flex items-center gap-3">
           <Link
@@ -141,7 +151,19 @@ export function SiteHeader() {
       {open && (
         <div className="fixed inset-0 top-[74px] z-40 flex flex-col bg-background lg:hidden">
           <nav className="flex-1 overflow-y-auto px-5 py-6" aria-label="Mobile">
+            {hasMenu ? (
+              menuTop.map((item) => (
+                <MobileMenuNode
+                  key={item.id}
+                  item={item}
+                  kids={menuChildren(item.id)}
+                  onNavigate={() => setOpen(false)}
+                />
+              ))
+            ) : (
+            <>
             {nav.slice(0, 2).map((item) => (
+
               <Link
                 key={item.to}
                 to={item.to}
@@ -202,7 +224,10 @@ export function SiteHeader() {
                 {page.nav_label || page.title}
               </a>
             ))}
+            </>
+            )}
           </nav>
+
           <div className="border-t border-line p-5">
             <Link
               to="/contact"
