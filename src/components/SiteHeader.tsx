@@ -46,19 +46,10 @@ export function SiteHeader() {
       )}
     >
       <div className="container-page flex h-[74px] items-center justify-between gap-6">
-        <Link to="/" className="group flex items-center gap-3" onClick={() => setOpen(false)}>
-          <span className="grad-cta flex h-10 w-10 items-center justify-center rounded-xl text-sm font-extrabold">
-            JS
-          </span>
-          <span
-            className={cn(
-              "text-[0.95rem] font-extrabold tracking-tight uppercase transition-colors",
-              scrolled ? "text-ink" : "text-white",
-            )}
-          >
-            Jugal K. Shukla
-          </span>
+        <Link to="/" className="group flex items-center" onClick={() => setOpen(false)} aria-label="Jugal Kishore Shukla — home">
+          <BrandLogo tone={scrolled ? "dark" : "light"} className="h-10 w-[150px]" />
         </Link>
+
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
           {nav.slice(0, 2).map((item) => (
