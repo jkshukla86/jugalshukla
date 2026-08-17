@@ -20,8 +20,7 @@ export function BrandLogo({
     <img
       src={tone === "light" ? logoDarkBg.url : logoLightBg.url}
       alt={label}
-      width={1691}
-      height={1117}
+      height={46}
       className={cn("block h-12 w-auto shrink-0 object-contain transition-all duration-300", className)}
     />
   );
