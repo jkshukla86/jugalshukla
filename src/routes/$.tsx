@@ -2,7 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { PageShell } from "@/components/PageShell";
 import { getPageWithSeo, listPublicPosts } from "@/lib/cms.functions";
-import { seoLinks, seoMeta } from "@/lib/cms";
+import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 
 export const Route = createFileRoute("/$")({
   loader: async ({ params }) => {
@@ -24,6 +24,7 @@ export const Route = createFileRoute("/$")({
         loaderData.seo,
       ),
       links: seoLinks(loaderData.seo),
+      scripts: seoScripts(loaderData.seo),
     };
   },
   component: CustomPage,

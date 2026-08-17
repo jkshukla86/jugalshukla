@@ -10,7 +10,7 @@ import { categories, services, type ServiceCategory } from "@/data/services";
 import { faqs, process } from "@/data/site";
 import { cn } from "@/lib/utils";
 import { getSeo } from "@/lib/cms.functions";
-import { seoLinks, seoMeta } from "@/lib/cms";
+import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 
 export const Route = createFileRoute("/services/")({
   loader: () => getSeo({ data: { path: "/services" } }).then((seo) => ({ seo })),
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/services/")({
       loaderData?.seo,
     ),
     links: seoLinks(loaderData?.seo),
+    scripts: seoScripts(loaderData?.seo),
   }),
   component: ServicesHub,
 });

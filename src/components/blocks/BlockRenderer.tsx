@@ -119,21 +119,33 @@ function PageHeroBlock({ data }: { data: BlockData }) {
 }
 
 function RichText({ data }: { data: BlockData }) {
+  const html = str(data, "html").trim();
+  const dark = str(data, "bg") === "dark";
   return (
     <section className={cn("section-y", bgClass(data))}>
       <div className="container-page">
-        <SectionHead data={data} light={str(data, "bg") === "dark"} />
-        <div className="mt-6 max-w-3xl space-y-5 text-muted-foreground">
-          {list<string>(data, "paragraphs").map((p, i) => (
-            <Reveal key={i} delay={i * 60}>
-              <p className={str(data, "bg") === "dark" ? "text-white/75" : undefined}>{p}</p>
-            </Reveal>
-          ))}
-        </div>
+        <SectionHead data={data} light={dark} />
+        {html ? (
+          <Reveal>
+            <div
+              className={cn("prose-content mt-6 max-w-3xl", dark && "text-white/75 [&_h2]:text-white [&_h3]:text-white")}
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+          </Reveal>
+        ) : (
+          <div className="mt-6 max-w-3xl space-y-5 text-muted-foreground">
+            {list<string>(data, "paragraphs").map((p, i) => (
+              <Reveal key={i} delay={i * 60}>
+                <p className={dark ? "text-white/75" : undefined}>{p}</p>
+              </Reveal>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 }
+
 
 function Cards({ data }: { data: BlockData }) {
   const cols = str(data, "columns", "3");
@@ -172,7 +184,7 @@ function ImageText({ data }: { data: BlockData }) {
           <Reveal className={right ? "lg:order-2" : ""}>
             <img
               src={image}
-              alt={str(data, "heading")}
+              alt={str(data, "alt") || str(data, "heading")}
               className="w-full rounded-[28px] object-cover shadow-[0_24px_60px_oklch(0.28_0.13_262/0.2)]"
             />
           </Reveal>
@@ -180,11 +192,16 @@ function ImageText({ data }: { data: BlockData }) {
         <Reveal delay={120}>
           {str(data, "eyebrow") && <p className="eyebrow">{str(data, "eyebrow")}</p>}
           <h2 className="h2-display mt-4">{str(data, "heading")}</h2>
-          <div className="mt-6 space-y-5 text-muted-foreground">
-            {list<string>(data, "paragraphs").map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </div>
+          {str(data, "html").trim() ? (
+            <div className="prose-content mt-6" dangerouslySetInnerHTML={{ __html: str(data, "html") }} />
+          ) : (
+            <div className="mt-6 space-y-5 text-muted-foreground">
+              {list<string>(data, "paragraphs").map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          )}
+
           {str(data, "ctaLabel") && (
             <a
               href={str(data, "ctaTo", "/contact")}

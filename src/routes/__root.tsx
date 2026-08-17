@@ -11,6 +11,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { getSiteSettings } from "@/lib/cms.functions";
+
 
 function NotFoundComponent() {
   return (
@@ -103,9 +105,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
+
+  // Custom code (GTM, verification tags, chat widgets) managed from Admin → Custom code.
+  loader: async () => {
+    try {
+      return await getSiteSettings();
+    } catch {
+      return { head_code: "", body_code: "", footer_code: "" };
+    }
+  },
 
   shellComponent: RootShell,
   component: RootComponent,
@@ -114,18 +125,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const settings = Route.useLoaderData();
+  const code = settings ?? { head_code: "", body_code: "", footer_code: "" };
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        {code.head_code ? <CustomCode html={code.head_code} target="head" /> : null}
       </head>
       <body>
+        {code.body_code ? <CustomCode html={code.body_code} target="body" /> : null}
         {children}
+        {code.footer_code ? <CustomCode html={code.footer_code} target="body" /> : null}
         <Scripts />
       </body>
     </html>
   );
 }
+
+/**
+ * Injects an admin-provided snippet (GTM, pixels, verification tags) so that any
+ * <script> inside it actually executes — cloned nodes from innerHTML never run.
+ */
+function CustomCode({ html, target }: { html: string; target: "head" | "body" }) {
+  const injector = `(function(){try{var t=document.createElement("template");t.innerHTML=${JSON.stringify(html)};var out=document.createDocumentFragment();Array.prototype.forEach.call(t.content.childNodes,function(n){if(n.nodeName==="SCRIPT"){var s=document.createElement("script");Array.prototype.forEach.call(n.attributes,function(a){s.setAttribute(a.name,a.value)});s.text=n.textContent||"";out.appendChild(s)}else{out.appendChild(n.cloneNode(true))}});document.${target}.appendChild(out)}catch(e){console.warn("Custom code failed",e)}})();`;
+  return <script dangerouslySetInnerHTML={{ __html: injector }} suppressHydrationWarning />;
+}
+
+
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();

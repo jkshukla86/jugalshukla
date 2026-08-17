@@ -3,7 +3,7 @@ import { CheckCircle2 } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { site } from "@/data/site";
 import { getSeo } from "@/lib/cms.functions";
-import { seoLinks, seoMeta } from "@/lib/cms";
+import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 
 export const Route = createFileRoute("/thank-you")({
   loader: () => getSeo({ data: { path: "/thank-you" } }).then((seo) => ({ seo })),
@@ -18,6 +18,7 @@ export const Route = createFileRoute("/thank-you")({
       loaderData?.seo,
     ),
     links: seoLinks(loaderData?.seo),
+    scripts: seoScripts(loaderData?.seo),
   }),
   component: ThankYou,
 });

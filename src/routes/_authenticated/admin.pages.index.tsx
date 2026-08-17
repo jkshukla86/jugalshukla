@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
@@ -64,6 +64,27 @@ function PagesList() {
 
   const existing = new Set((pages ?? []).map((p) => p.path));
   const missingSeeds = defaultPageSeeds.filter((s) => !existing.has(s.path));
+
+  // Import the live designs automatically the first time, so every existing page is editable
+  // right away instead of waiting for a manual import.
+  useEffect(() => {
+    if (!pages || missingSeeds.length === 0) return;
+    void (async () => {
+      await supabase.from("pages").upsert(
+        missingSeeds.map((seed) => ({
+          path: seed.path,
+          title: seed.title,
+          kind: "system",
+          status: "published",
+          blocks: seed.blocks as unknown as never,
+          show_in_nav: false,
+        })),
+        { onConflict: "path" },
+      );
+      void qc.invalidateQueries({ queryKey: ["admin-pages"] });
+    })();
+  }, [pages, missingSeeds.length, qc]);
+
 
   return (
     <div className="grid gap-6">

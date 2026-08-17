@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Gauge } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageField } from "@/components/admin/FieldsEditor";
-import { normalizePath, type SeoRecord } from "@/lib/cms";
+import { SchemaBuilder } from "@/components/admin/SchemaBuilder";
+import { normalizePath, pageSpeedUrl, type SeoRecord } from "@/lib/cms";
 import { services } from "@/data/services";
+
 
 export const Route = createFileRoute("/_authenticated/admin/seo/")({
   component: SeoAdmin,
@@ -182,15 +185,14 @@ function SeoAdmin() {
             />
             Hide this page from search engines (noindex)
           </label>
-          <label className={label}>
-            Structured data (JSON-LD)
-            <textarea
-              rows={5}
-              value={draft.jsonld ?? ""}
-              onChange={(e) => set("jsonld", e.target.value)}
-              className={input}
-            />
-          </label>
+          <SchemaBuilder
+            value={draft.jsonld ?? ""}
+            onChange={(json) => set("jsonld", json)}
+            path={selected}
+            title={draft.title || selected}
+            description={draft.description ?? ""}
+            image={draft.og_image ?? ""}
+          />
 
           <div className="rounded-xl border border-line bg-mist p-4">
             <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Google preview</p>
@@ -200,6 +202,16 @@ function SeoAdmin() {
               {draft.description || "Your meta description will appear here."}
             </p>
           </div>
+
+          <div className="flex flex-wrap items-center gap-4 text-xs font-semibold">
+            <a href={pageSpeedUrl(selected)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-blue-700">
+              <Gauge className="h-3.5 w-3.5" /> Check PageSpeed score for this page
+            </a>
+            <Link to="/admin/speed" className="text-muted-foreground hover:text-ink">
+              Run tests inside the admin →
+            </Link>
+          </div>
+
 
           {message && <p className="text-sm text-ink">{message}</p>}
           <button

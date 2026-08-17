@@ -60,6 +60,7 @@ export type Database = {
         Row: {
           body: string
           category: string
+          cover_alt: string
           cover_image: string | null
           created_at: string
           excerpt: string
@@ -74,6 +75,7 @@ export type Database = {
         Insert: {
           body?: string
           category?: string
+          cover_alt?: string
           cover_image?: string | null
           created_at?: string
           excerpt?: string
@@ -88,6 +90,7 @@ export type Database = {
         Update: {
           body?: string
           category?: string
+          cover_alt?: string
           cover_image?: string | null
           created_at?: string
           excerpt?: string
@@ -142,6 +145,30 @@ export type Database = {
           og_title?: string | null
           path?: string
           title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          body_code: string
+          footer_code: string
+          head_code: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          body_code?: string
+          footer_code?: string
+          head_code?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          body_code?: string
+          footer_code?: string
+          head_code?: string
+          id?: string
           updated_at?: string
         }
         Relationships: []

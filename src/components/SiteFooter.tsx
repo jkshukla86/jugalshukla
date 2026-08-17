@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { services } from "@/data/services";
 import { site } from "@/data/site";
 
@@ -8,12 +9,7 @@ export function SiteFooter() {
     <footer className="bg-ink text-white/70">
       <div className="container-page grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4">
         <div>
-          <div className="flex items-center gap-3">
-            <span className="grad-cta flex h-10 w-10 items-center justify-center rounded-xl text-sm font-extrabold">
-              JS
-            </span>
-            <span className="text-sm font-extrabold tracking-tight text-white uppercase">Jugal K. Shukla</span>
-          </div>
+          <BrandLogo tone="light" className="h-16 w-[88px]" />
           <p className="mt-5 text-sm leading-relaxed">
             Independent digital marketing, automation and growth expert. 10+ years turning SEO, paid media and AI
             workflows into qualified pipeline.

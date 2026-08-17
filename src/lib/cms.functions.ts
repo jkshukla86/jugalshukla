@@ -120,3 +120,15 @@ export const getPublicPost = createServerFn({ method: "GET" })
       more: (moreRes.data ?? []) as unknown as PostRecord[],
     };
   });
+
+export const getSiteSettings = createServerFn({ method: "GET" }).handler(
+  async (): Promise<{ head_code: string; body_code: string; footer_code: string }> => {
+    const { data } = await publicClient()
+      .from("site_settings")
+      .select("head_code, body_code, footer_code")
+      .eq("id", "default")
+      .maybeSingle();
+    const row = data as { head_code: string; body_code: string; footer_code: string } | null;
+    return row ?? { head_code: "", body_code: "", footer_code: "" };
+  },
+);
