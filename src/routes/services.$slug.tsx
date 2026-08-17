@@ -7,7 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { ServiceIcon } from "@/components/ServiceIcon";
 import { serviceBySlug, services } from "@/data/services";
 import { getSeo } from "@/lib/cms.functions";
-import { seoLinks, seoMeta } from "@/lib/cms";
+import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 
 export const Route = createFileRoute("/services/$slug")({
   loader: async ({ params }) => {
@@ -22,6 +22,7 @@ export const Route = createFileRoute("/services/$slug")({
     return {
       meta: seoMeta({ title: s.seoTitle, description: s.seoDescription }, loaderData?.seo),
       links: seoLinks(loaderData?.seo),
+      scripts: seoScripts(loaderData?.seo),
     };
   },
   component: ServicePage,

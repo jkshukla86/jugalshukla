@@ -5,7 +5,7 @@ import { PageHero, PageShell } from "@/components/PageShell";
 import { Reveal } from "@/components/Reveal";
 import { posts as staticPosts } from "@/data/posts";
 import { getSeo, listPublicPosts } from "@/lib/cms.functions";
-import { seoLinks, seoMeta } from "@/lib/cms";
+import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/blog/")({
@@ -24,6 +24,7 @@ export const Route = createFileRoute("/blog/")({
       loaderData?.seo,
     ),
     links: seoLinks(loaderData?.seo),
+    scripts: seoScripts(loaderData?.seo),
   }),
   component: Blog,
 });

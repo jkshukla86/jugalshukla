@@ -8,7 +8,7 @@ import { credentials } from "@/data/site";
 
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { getPageWithSeo, listPublicPosts } from "@/lib/cms.functions";
-import { seoLinks, seoMeta } from "@/lib/cms";
+import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 export const Route = createFileRoute("/about")({
   loader: async () => {
     const [{ page, seo }, dbPosts] = await Promise.all([
@@ -29,6 +29,7 @@ export const Route = createFileRoute("/about")({
       loaderData?.seo,
     ),
     links: seoLinks(loaderData?.seo),
+    scripts: seoScripts(loaderData?.seo),
   }),
   component: About,
 });
