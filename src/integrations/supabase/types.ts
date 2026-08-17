@@ -59,6 +59,7 @@ export type Database = {
         Row: {
           blocks: Json
           created_at: string
+          edited: boolean
           id: string
           kind: string
           nav_label: string | null
@@ -72,6 +73,7 @@ export type Database = {
         Insert: {
           blocks?: Json
           created_at?: string
+          edited?: boolean
           id?: string
           kind?: string
           nav_label?: string | null
@@ -85,6 +87,7 @@ export type Database = {
         Update: {
           blocks?: Json
           created_at?: string
+          edited?: boolean
           id?: string
           kind?: string
           nav_label?: string | null
