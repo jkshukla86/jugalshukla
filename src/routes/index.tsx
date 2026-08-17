@@ -391,7 +391,8 @@ function Home() {
                   <figcaption className="mt-6 border-t border-line pt-5 text-sm">
                     <span className="block font-semibold text-ink">{t.name}</span>
                     <span className="text-muted-foreground">
-                      {t.role}, {t.company}
+                      {t.role}
+                      {t.company ? `, ${t.company}` : ""}
                     </span>
                   </figcaption>
                 </figure>
