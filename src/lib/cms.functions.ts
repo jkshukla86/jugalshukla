@@ -39,7 +39,8 @@ export const getPublicPage = createServerFn({ method: "GET" })
 export const getSeo = createServerFn({ method: "GET" })
   .inputValidator((data: { path: string }) => ({ path: String(data.path).slice(0, 200) }))
   .handler(async ({ data }): Promise<SeoRecord | null> => {
-    const { data: row } = await publicClient()
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await supabaseAdmin
       .from("seo_meta")
       .select("path, title, description, keywords, og_title, og_description, og_image, canonical, noindex, jsonld")
       .eq("path", data.path)
@@ -51,6 +52,7 @@ export const getPageWithSeo = createServerFn({ method: "GET" })
   .inputValidator((data: { path: string }) => ({ path: String(data.path).slice(0, 200) }))
   .handler(async ({ data }): Promise<{ page: PageRecord | null; seo: SeoRecord | null }> => {
     const client = publicClient();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const [pageRes, seoRes] = await Promise.all([
       client
         .from("pages")
@@ -58,7 +60,7 @@ export const getPageWithSeo = createServerFn({ method: "GET" })
         .eq("path", data.path)
         .eq("status", "published")
         .maybeSingle(),
-      client
+      supabaseAdmin
         .from("seo_meta")
         .select("path, title, description, keywords, og_title, og_description, og_image, canonical, noindex, jsonld")
         .eq("path", data.path)
@@ -94,6 +96,7 @@ export const getPublicPost = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => ({ slug: String(data.slug).slice(0, 200) }))
   .handler(async ({ data }): Promise<{ post: PostRecord | null; seo: SeoRecord | null; more: PostRecord[] }> => {
     const client = publicClient();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const [postRes, seoRes, moreRes] = await Promise.all([
       client
         .from("posts")
@@ -101,7 +104,7 @@ export const getPublicPost = createServerFn({ method: "GET" })
         .eq("slug", data.slug)
         .eq("status", "published")
         .maybeSingle(),
-      client
+      supabaseAdmin
         .from("seo_meta")
         .select("path, title, description, keywords, og_title, og_description, og_image, canonical, noindex, jsonld")
         .eq("path", `/blog/${data.slug}`)
@@ -123,7 +126,8 @@ export const getPublicPost = createServerFn({ method: "GET" })
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ head_code: string; body_code: string; footer_code: string }> => {
-    const { data } = await publicClient()
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
       .from("site_settings")
       .select("head_code, body_code, footer_code")
       .eq("id", "default")
