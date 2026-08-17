@@ -28,7 +28,7 @@ export const getPublicPage = createServerFn({ method: "GET" })
   .handler(async ({ data }): Promise<PageRecord | null> => {
     const { data: row } = await publicClient()
       .from("pages")
-      .select("id, path, title, kind, status, blocks, show_in_nav, nav_label, sort_order")
+      .select("id, path, title, kind, status, blocks, show_in_nav, nav_label, sort_order, edited")
       .eq("path", data.path)
       .eq("status", "published")
       .maybeSingle();
@@ -56,7 +56,7 @@ export const getPageWithSeo = createServerFn({ method: "GET" })
     const [pageRes, seoRes] = await Promise.all([
       client
         .from("pages")
-        .select("id, path, title, kind, status, blocks, show_in_nav, nav_label, sort_order")
+        .select("id, path, title, kind, status, blocks, show_in_nav, nav_label, sort_order, edited")
         .eq("path", data.path)
         .eq("status", "published")
         .maybeSingle(),

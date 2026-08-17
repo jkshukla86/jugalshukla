@@ -68,6 +68,7 @@ function PageEditor() {
         nav_label: navLabel || null,
         sort_order: sortOrder,
         blocks: blocks as unknown as never,
+        edited: true,
       })
       .eq("id", id);
     setSaving(false);
