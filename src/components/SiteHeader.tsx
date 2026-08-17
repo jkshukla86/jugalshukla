@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { listNavPages } from "@/lib/cms.functions";
+import { listMenu, listNavPages, type NavItemRecord } from "@/lib/cms.functions";
 import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -20,10 +20,20 @@ export function SiteHeader() {
     queryFn: () => listNavPages(),
     staleTime: 60_000,
   });
+  const { data: menuItems = [] } = useQuery({
+    queryKey: ["site-menu"],
+    queryFn: () => listMenu(),
+    staleTime: 60_000,
+  });
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [mega, setMega] = useState(false);
   const [mobileServices, setMobileServices] = useState(false);
+
+  const hasMenu = menuItems.length > 0;
+  const menuTop = menuItems.filter((i) => !i.parent_id).sort((a, b) => a.sort_order - b.sort_order);
+  const menuChildren = (id: string) =>
+    menuItems.filter((i) => i.parent_id === id).sort((a, b) => a.sort_order - b.sort_order);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -31,6 +41,7 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -53,9 +64,16 @@ export function SiteHeader() {
 
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
+          {hasMenu ? (
+            menuTop.map((item) => (
+              <MenuNode key={item.id} item={item} kids={menuChildren(item.id)} scrolled={scrolled} />
+            ))
+          ) : (
+          <>
           {nav.slice(0, 2).map((item) => (
             <NavItem key={item.to} {...item} scrolled={scrolled} />
           ))}
+
 
           <div className="relative" onMouseEnter={() => setMega(true)} onMouseLeave={() => setMega(false)}>
             <button
@@ -115,7 +133,10 @@ export function SiteHeader() {
               {page.nav_label || page.title}
             </a>
           ))}
+          </>
+          )}
         </nav>
+
 
         <div className="flex items-center gap-3">
           <Link
@@ -141,7 +162,19 @@ export function SiteHeader() {
       {open && (
         <div className="fixed inset-0 top-[74px] z-40 flex flex-col bg-background lg:hidden">
           <nav className="flex-1 overflow-y-auto px-5 py-6" aria-label="Mobile">
+            {hasMenu ? (
+              menuTop.map((item) => (
+                <MobileMenuNode
+                  key={item.id}
+                  item={item}
+                  kids={menuChildren(item.id)}
+                  onNavigate={() => setOpen(false)}
+                />
+              ))
+            ) : (
+            <>
             {nav.slice(0, 2).map((item) => (
+
               <Link
                 key={item.to}
                 to={item.to}
@@ -202,7 +235,10 @@ export function SiteHeader() {
                 {page.nav_label || page.title}
               </a>
             ))}
+            </>
+            )}
           </nav>
+
           <div className="border-t border-line p-5">
             <Link
               to="/contact"
@@ -230,5 +266,83 @@ function NavItem({ label, to, scrolled }: { label: string; to: string; scrolled:
     >
       {label}
     </Link>
+  );
+}
+
+function MenuNode({ item, kids, scrolled }: { item: NavItemRecord; kids: NavItemRecord[]; scrolled: boolean }) {
+  const [open, setOpen] = useState(false);
+  const base = cn(
+    "flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+    scrolled ? "text-ink hover:text-blue-700" : "text-white/90 hover:text-white",
+  );
+
+  if (kids.length === 0) {
+    return (
+      <a href={item.url} className={base}>
+        {item.label}
+      </a>
+    );
+  }
+
+  return (
+    <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <a href={item.url} aria-expanded={open} className={base}>
+        {item.label} <ChevronDown className="h-4 w-4" />
+      </a>
+      {open && (
+        <div className="absolute top-full left-1/2 w-[min(560px,88vw)] -translate-x-1/2 pt-3">
+          <div className="grid gap-1 rounded-3xl border border-line bg-card p-4 shadow-[0_28px_70px_oklch(0.28_0.13_262/0.18)] sm:grid-cols-2">
+            {kids.map((kid) => (
+              <a key={kid.id} href={kid.url} className="rounded-xl p-3 text-sm font-semibold text-ink hover:bg-mist">
+                {kid.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileMenuNode({
+  item,
+  kids,
+  onNavigate,
+}: {
+  item: NavItemRecord;
+  kids: NavItemRecord[];
+  onNavigate: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-b border-line">
+      <div className="flex items-center justify-between">
+        <a href={item.url} onClick={onNavigate} className="block py-4 text-lg font-semibold text-ink">
+          {item.label}
+        </a>
+        {kids.length > 0 && (
+          <button
+            type="button"
+            aria-label={`Toggle ${item.label} links`}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            className="p-3 text-ink"
+          >
+            <ChevronDown className={cn("h-5 w-5 transition-transform", open && "rotate-180")} />
+          </button>
+        )}
+      </div>
+      {open &&
+        kids.map((kid) => (
+          <a
+            key={kid.id}
+            href={kid.url}
+            onClick={onNavigate}
+            className="block py-2.5 pl-4 text-sm text-muted-foreground"
+          >
+            {kid.label}
+          </a>
+        ))}
+    </div>
   );
 }

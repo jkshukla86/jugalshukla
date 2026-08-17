@@ -10,6 +10,7 @@ export interface PageRecord {
   show_in_nav: boolean;
   nav_label: string | null;
   sort_order: number;
+  edited?: boolean;
 }
 
 export interface PostRecord {

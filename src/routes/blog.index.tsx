@@ -4,15 +4,21 @@ import { CtaBand } from "@/components/CtaBand";
 import { PageHero, PageShell } from "@/components/PageShell";
 import { Reveal } from "@/components/Reveal";
 import { posts as staticPosts } from "@/data/posts";
-import { getSeo, listPublicPosts } from "@/lib/cms.functions";
+import { getPageWithSeo, listPublicPosts } from "@/lib/cms.functions";
+import { BlockRenderer } from "@/components/blocks/BlockRenderer";
+
 import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/blog/")({
   loader: async () => {
-    const [dbPosts, seo] = await Promise.all([listPublicPosts(), getSeo({ data: { path: "/blog" } })]);
-    return { dbPosts, seo };
+    const [dbPosts, { page, seo }] = await Promise.all([
+      listPublicPosts(),
+      getPageWithSeo({ data: { path: "/blog" } }),
+    ]);
+    return { dbPosts, seo, page };
   },
+
   head: ({ loaderData }) => ({
     meta: seoMeta(
       {
@@ -33,7 +39,15 @@ const fmt = (d: string) =>
   !d ? "" : new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
 function Blog() {
-  const { dbPosts } = Route.useLoaderData();
+  const { dbPosts, page } = Route.useLoaderData();
+  if (page?.edited && page.blocks.length > 0) {
+    return (
+      <PageShell>
+        <BlockRenderer blocks={page.blocks} posts={dbPosts} />
+      </PageShell>
+    );
+  }
+
   const posts = dbPosts.length
     ? dbPosts.map((p) => ({
         slug: p.slug,

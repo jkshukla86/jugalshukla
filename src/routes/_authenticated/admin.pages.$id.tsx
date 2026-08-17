@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { BlockEditor } from "@/components/admin/BlockEditor";
 import { isBlockArray, type Block } from "@/lib/blocks";
 import { normalizePath } from "@/lib/cms";
+import { seedByPath } from "@/data/pageSeeds";
+
 
 export const Route = createFileRoute("/_authenticated/admin/pages/$id")({
   component: PageEditor,
@@ -44,8 +46,13 @@ function PageEditor() {
     setShowInNav(data.show_in_nav);
     setNavLabel(data.nav_label ?? "");
     setSortOrder(data.sort_order ?? 0);
-    setBlocks(isBlockArray(data.blocks) ? data.blocks : []);
+    const saved = isBlockArray(data.blocks) ? data.blocks : [];
+    // Empty page but we know its live design? Load it so there is always something to edit.
+    setBlocks(saved.length > 0 ? saved : (seedByPath(data.path)?.blocks() ?? []));
   }, [data]);
+
+  const seed = data ? seedByPath(data.path) : undefined;
+
 
   const save = async (publish?: boolean) => {
     setSaving(true);
@@ -61,6 +68,7 @@ function PageEditor() {
         nav_label: navLabel || null,
         sort_order: sortOrder,
         blocks: blocks as unknown as never,
+        edited: true,
       })
       .eq("id", id);
     setSaving(false);
@@ -152,9 +160,23 @@ function PageEditor() {
       </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-bold tracking-tight text-ink">Sections</h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-bold tracking-tight text-ink">Sections</h2>
+          {seed && (
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm("Replace the sections below with the original live design?")) setBlocks(seed.blocks());
+              }}
+              className="text-xs font-semibold text-blue-700"
+            >
+              Reset to original design
+            </button>
+          )}
+        </div>
         <BlockEditor blocks={blocks} onChange={setBlocks} />
       </div>
+
 
       {data?.kind !== "system" && (
         <button type="button" onClick={() => void remove()} className="w-fit text-xs font-semibold text-destructive">

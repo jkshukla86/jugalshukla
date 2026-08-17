@@ -31,20 +31,28 @@ export const runPageSpeed = createServerFn({ method: "POST" })
     for (const c of ["performance", "seo", "accessibility", "best-practices"]) {
       endpoint.searchParams.append("category", c);
     }
-    const key = process.env["PAGESPEED_API_KEY"];
+    const key = process.env["PAGESPEED_API_KEY"] || process.env["GOOGLE_PAGESPEED_API_KEY"];
     if (key) endpoint.searchParams.set("key", key);
 
     try {
-      const res = await fetch(endpoint.toString());
+      // Google throttles keyless requests hard, so retry a few times with backoff.
+      let res = await fetch(endpoint.toString());
+      for (let attempt = 0; attempt < 3 && (res.status === 429 || res.status >= 500); attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 2500 * (attempt + 1)));
+        res = await fetch(endpoint.toString());
+      }
       if (!res.ok) {
         return {
           ok: false,
           error:
             res.status === 429
-              ? "Google is rate-limiting the free test right now. Try again in a minute, or open the full report."
+              ? key
+                ? "Google is still rate-limiting this test. Wait a minute and try again, or open the full report."
+                : "Google limits free tests without an API key. Add a PageSpeed Insights API key in settings for reliable tests, or open the full report."
               : `Google could not test this page (${res.status}). Make sure the page is published and publicly reachable.`,
         };
       }
+
       const json = (await res.json()) as {
         lighthouseResult?: {
           categories?: Record<string, { score?: number }>;

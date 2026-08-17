@@ -28,7 +28,7 @@ export const getPublicPage = createServerFn({ method: "GET" })
   .handler(async ({ data }): Promise<PageRecord | null> => {
     const { data: row } = await publicClient()
       .from("pages")
-      .select("id, path, title, kind, status, blocks, show_in_nav, nav_label, sort_order")
+      .select("id, path, title, kind, status, blocks, show_in_nav, nav_label, sort_order, edited")
       .eq("path", data.path)
       .eq("status", "published")
       .maybeSingle();
@@ -56,7 +56,7 @@ export const getPageWithSeo = createServerFn({ method: "GET" })
     const [pageRes, seoRes] = await Promise.all([
       client
         .from("pages")
-        .select("id, path, title, kind, status, blocks, show_in_nav, nav_label, sort_order")
+        .select("id, path, title, kind, status, blocks, show_in_nav, nav_label, sort_order, edited")
         .eq("path", data.path)
         .eq("status", "published")
         .maybeSingle(),
@@ -82,6 +82,26 @@ export const listNavPages = createServerFn({ method: "GET" }).handler(async () =
     .order("sort_order", { ascending: true });
   return (data ?? []) as { path: string; title: string; nav_label: string | null; sort_order: number }[];
 });
+
+export interface NavItemRecord {
+  id: string;
+  label: string;
+  url: string;
+  parent_id: string | null;
+  sort_order: number;
+  visible: boolean;
+}
+
+/** The admin-managed site menu (flat list; children reference parent_id). */
+export const listMenu = createServerFn({ method: "GET" }).handler(async (): Promise<NavItemRecord[]> => {
+  const { data } = await publicClient()
+    .from("nav_items")
+    .select("id, label, url, parent_id, sort_order, visible")
+    .eq("visible", true)
+    .order("sort_order", { ascending: true });
+  return (data ?? []) as unknown as NavItemRecord[];
+});
+
 
 export const listPublicPosts = createServerFn({ method: "GET" }).handler(async (): Promise<PostRecord[]> => {
   const { data } = await publicClient()

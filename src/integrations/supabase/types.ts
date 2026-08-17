@@ -14,10 +14,52 @@ export type Database = {
   }
   public: {
     Tables: {
+      nav_items: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          parent_id: string | null
+          sort_order: number
+          updated_at: string
+          url: string
+          visible: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          parent_id?: string | null
+          sort_order?: number
+          updated_at?: string
+          url?: string
+          visible?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          parent_id?: string | null
+          sort_order?: number
+          updated_at?: string
+          url?: string
+          visible?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nav_items_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "nav_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pages: {
         Row: {
           blocks: Json
           created_at: string
+          edited: boolean
           id: string
           kind: string
           nav_label: string | null
@@ -31,6 +73,7 @@ export type Database = {
         Insert: {
           blocks?: Json
           created_at?: string
+          edited?: boolean
           id?: string
           kind?: string
           nav_label?: string | null
@@ -44,6 +87,7 @@ export type Database = {
         Update: {
           blocks?: Json
           created_at?: string
+          edited?: boolean
           id?: string
           kind?: string
           nav_label?: string | null

@@ -5,16 +5,20 @@ import { FaqList, faqSchema } from "@/components/FaqList";
 import { PageHero, PageShell } from "@/components/PageShell";
 import { Reveal } from "@/components/Reveal";
 import { ServiceIcon } from "@/components/ServiceIcon";
+import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { serviceBySlug, services } from "@/data/services";
-import { getSeo } from "@/lib/cms.functions";
+import { getPageWithSeo, listPublicPosts } from "@/lib/cms.functions";
 import { seoLinks, seoMeta, seoScripts } from "@/lib/cms";
 
 export const Route = createFileRoute("/services/$slug")({
   loader: async ({ params }) => {
     const service = serviceBySlug(params.slug);
     if (!service) throw notFound();
-    const seo = await getSeo({ data: { path: `/services/${params.slug}` } });
-    return { service, seo };
+    const [{ page, seo }, posts] = await Promise.all([
+      getPageWithSeo({ data: { path: `/services/${params.slug}` } }),
+      listPublicPosts(),
+    ]);
+    return { service, seo, page, posts };
   },
   head: ({ loaderData }) => {
     const s = loaderData?.service;
@@ -29,10 +33,21 @@ export const Route = createFileRoute("/services/$slug")({
 });
 
 function ServicePage() {
-  const { service: s } = Route.useLoaderData();
+  const { service: s, page, posts } = Route.useLoaderData();
   const related = services.filter((x) => x.slug !== s.slug && x.category === s.category).slice(0, 3);
   const fallback = services.filter((x) => x.slug !== s.slug).slice(0, 3);
   const cross = related.length ? related : fallback;
+
+  // Once the page has been customised in the admin, its sections replace the built-in design.
+  if (page?.edited && page.blocks.length > 0) {
+    return (
+      <PageShell>
+        <BlockRenderer blocks={page.blocks} posts={posts} />
+      </PageShell>
+    );
+  }
+
+
 
   return (
     <PageShell>
